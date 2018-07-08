@@ -243,22 +243,22 @@ public class KeyHandler implements DeviceKeyHandler {
             }
         }
     }
-
-    public boolean handleKeyEvent(KeyEvent event) {
+    
+    public KeyEvent handleKeyEvent(KeyEvent event) {
         int scanCode = event.getScanCode();
         boolean isKeySupported = ArrayUtils.contains(sSupportedGestures, scanCode);
         boolean isSliderModeSupported = sSupportedSliderModes.indexOfKey(scanCode) >= 0;
         if (!isKeySupported && !isSliderModeSupported) {
-            return false;
+            return null;
         }
 
         // We only want ACTION_UP event, except FLIP_CAMERA_SCANCODE
         if (scanCode == FLIP_CAMERA_SCANCODE) {
             if (event.getAction() != KeyEvent.ACTION_DOWN) {
-                return true;
+                return event;
             }
         } else if (event.getAction() != KeyEvent.ACTION_UP) {
-            return true;
+            return event;
         }
 
         if (isSliderModeSupported) {
@@ -286,7 +286,7 @@ public class KeyHandler implements DeviceKeyHandler {
                 mEventHandler.sendMessage(msg);
             }
         }
-        return true;
+        return event;
     }
 
     private Message getMessageForKeyEvent(int scancode) {
